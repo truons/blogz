@@ -72,9 +72,11 @@ def login():
         else:
             if user and user.password != password:
                 flash('Your password is incorrect', 'error')
+                
             else:
                 flash('Username does not exist', 'error')
-
+    return render_template('login.html')
+            
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
