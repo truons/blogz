@@ -44,7 +44,7 @@ class User(db.Model):
 
 @app.before_request
 def login():
-    allowed_routes = ['index', 'login', 'register', 'blog']
+    allowed_routes = ['index', 'login','blog', 'signup']
 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
@@ -63,6 +63,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         
+        
         if user and check_pw_hash(password, user.pw_hash):
             session['username'] = username
             print(session)
@@ -75,6 +76,7 @@ def login():
                 
             else:
                 flash('Username does not exist', 'error')
+                
     return render_template('login.html')
             
 @app.route('/signup', methods=['POST', 'GET'])
