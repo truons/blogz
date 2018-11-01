@@ -44,7 +44,7 @@ class User(db.Model):
 
 @app.before_request
 def login():
-    allowed_routes = ['index', 'login','blog', 'signup']
+    allowed_routes = ['index', 'login','blog', 'signup', 'logout', 'newpost']
 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
@@ -124,23 +124,33 @@ def logout():
 
     return redirect('/blog')
 
-@app.route('/blog', methods=['GET'])
+@app.route('/blog', methods=['POST','GET'])
 def blog_index():
     if request.args.get("id"):
         blog = Blog.query.filter_by(id = request.args.get("id")).first()
-        return render_template('singpost.html', blog=blog)
-
+        return render_template('singlePost.html', blogs=blog)
+        if blog_id:
+            single_post = Blog.query.get(post_id)
+            return render_template('singlePost.html', blogs=single_post)
+            if author_id:
+                posts_from_author = Blog.query.filter_by(owner_id=author_id)
+                return render_template('singleUser.html', blogs=posts_from_author)
+    
+    
     else:
         blogs = Blog.query.all()
-        return render_template('blog.html', title="Blogz! from "+blog_user, blogs=blogs.items, username=blog_user, page=page, next_page=next_page, prev_page=prev_page)
+        return render_template('blog.html', blogs=blogs)
+        #return render_template('blog.html', title="Blogz! from "+blog, blogs=blogs.items, username=blog, page=page, next_page=next_page, prev_page=prev_page)
     
 
-@app.route('/newpost', methods=['POST'])
+@app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
+    
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        blog = Blog(title, body)
+        owner = User.query.filter_by(username=session['username']).first()
+        blog = Blog(title, body, owner, pub_date=None)
 
         title_error = ''
         body_error = ''
@@ -152,7 +162,7 @@ def newpost():
             body_error = 'Please enter in the body'
 
         if not title_error and not body_error:
-            new_blog = Blog(title, body)
+            new_blog = Blog(title, body, owner, pub_date=None)
             db.session.add(new_blog)
             db.session.commit()
 

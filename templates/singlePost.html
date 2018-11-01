@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{blogs.blog_title}}</h2>
+<p>{{blogs.blog_body}}</p>
+<p>Written by <a href='./blog?owner_id={{blogs.owner_id}}'>{{blogs.owner.username}}</a> on: {{blogs.blog_date}}</p>
+
+{% endblock %}

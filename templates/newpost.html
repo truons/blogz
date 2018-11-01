@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>Add a Blog Entry</h1>
-    <form method="post" action="/newpost">
+    <form action="/newpost" method="post">
         <label>Title for your new blog:
             <input type="text" name='title'/>
             <span class='error'>{{title_error}}</span><br>
